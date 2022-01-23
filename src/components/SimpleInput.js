@@ -1,16 +1,24 @@
-import React, { useState } from "react";
+import React from "react";
+import useInput from "../hooks/use-input";
 
-const SimpleInput = (props) => {
-  const [enteredName, setEnteredName] = useState("");
-  const [nameInputTouched, setNameInputTouched] = useState(false);
-  const [enteredEmail, setEnteredEmail] = useState("");
-  const [emailInputTouched, setEmailInputTouched] = useState(false);
+const SimpleInput = () => {
+  const {
+    value: enteredName,
+    valueIsValid: nameInputValid,
+    valueInputInvalid: nameInputInvalid,
+    valueInputHandler: nameInputHandler,
+    valueInputBlurHandler: nameInputBlurHandler,
+    reset: resetName,
+  } = useInput((value) => value.trim() !== "");
 
-  const nameInputValid = enteredName.trim() !== "";
-  const nameInputInvalid = !nameInputValid && nameInputTouched;
-
-  const emailInputValid = enteredEmail.trim().includes("@");
-  const emailInputInvalid = !emailInputValid && emailInputTouched;
+  const {
+    value: enteredEmail,
+    valueIsValid: emailInputValid,
+    valueInputInvalid: emailInputInvalid,
+    valueInputHandler: emailInputHandler,
+    valueInputBlurHandler: emailInputBlurHandler,
+    reset: resetEmail,
+  } = useInput((value) => value.trim().includes("@"));
 
   let formIsValid = false;
 
@@ -18,32 +26,14 @@ const SimpleInput = (props) => {
     formIsValid = true;
   }
 
-  const nameInputHandler = (event) => {
-    setEnteredName(event.target.value);
-  };
-
-  const emailInputHandler = (event) => {
-    setEnteredEmail(event.target.value);
-  };
-
   const submitHandler = (event) => {
     event.preventDefault();
-    if (!enteredName || !enteredEmail) return;
-    setEnteredName("");
-    setNameInputTouched(false);
-    setEnteredEmail("");
-    setEmailInputTouched(false);
+    if (!enteredName) return;
+    resetName();
+    resetEmail();
   };
 
-  const nameInputBlurHandler = (event) => {
-    setNameInputTouched(true);
-  };
-
-  const emailInputBlurHandler = (event) => {
-    setEmailInputTouched(true);
-  };
-
-  const buttonClasses = nameInputInvalid ? "invalidBtn" : "";
+  const buttonClasses = formIsValid ? "" : "invalidBtn";
 
   return (
     <form onSubmit={submitHandler}>
